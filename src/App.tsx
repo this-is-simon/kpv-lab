@@ -19,11 +19,19 @@ function App() {
           max={100}
           min={0}
           step={5}
-          value={0}
+          value={50}
           unit={"chickens"}
           onChange={(value: number) => setPercentSlider(value)}
         />
-        "Slider in App.tsx:" {percentSlider}
+        <Slider
+          label="Decimal Slider"
+          max={1}
+          min={0}
+          step={0.01}
+          value={0}
+          unit={"Decimals"}
+          onChange={(value: number) => setPercentSlider(value)}
+        />
       </header>
     </div>
   );

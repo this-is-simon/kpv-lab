@@ -21,25 +21,19 @@ export function Slider(initData: SliderProps): ReactElement {
   const { label, max, min, step, value, unit, onChange } = slider;
 
   useEffect(() => {
-    setSlider({ ...slider, value: min });
-  }, []);
-
-  useEffect(() => {
     const sliderBar = sliderRef.current;
     const sliderWidth = sliderBar?.offsetWidth as number;
     const thumbWidth = sliderThumbRef.current?.offsetWidth as number;
-
-    if (sliderWidth && thumbWidth) {
-      // Calculate the total number of steps
-      const totalSteps = (max - min) / step;
-      // Calculate the width of one step
-      const stepWidth = sliderWidth / totalSteps;
-      // Calculate the percentage offset for the thumb
-      const thumbPosition = ((value - min) / step) * stepWidth;
-      console.log({ totalSteps, stepWidth, thumbOffset: thumbPosition, thumbWidth });
-      // Adjust for width of thumb
-      setPosition(`${thumbPosition - thumbWidth / 2}px`);
-    }
+    // Calculate the total number of steps
+    const totalSteps = (max - min) / step;
+    // Calculate the width of one step
+    const stepWidth = sliderWidth / totalSteps;
+    // Calculate the percentage offset for the thumb
+    const thumbPosition = ((value - min) / step) * stepWidth;
+    const thumbWidthOffset = thumbWidth / 2;
+    console.log({ totalSteps, stepWidth, thumbOffset: thumbPosition, thumbWidth });
+    // Adjust for width of thumb
+    setPosition(`${thumbPosition - thumbWidthOffset}px`);
   }, [value]);
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -55,7 +49,7 @@ export function Slider(initData: SliderProps): ReactElement {
         const adjustedValue = min + Math.round((unroundedValue - min) / step) * step;
 
         // Ensure the adjusted value is within the specified range
-        const clampedValue = Math.min(Math.max(adjustedValue, min), max);
+        const clampedValue = Number(Math.min(Math.max(adjustedValue, min), max).toFixed(2));
         console.log({ percentage, unroundedValue, adjustedValue, clampedValue });
         onChange(clampedValue);
         setSlider({ ...slider, value: clampedValue });
