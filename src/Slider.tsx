@@ -16,9 +16,9 @@ let initData = {
   label: "Percentage Slider",
   max: 100,
   min: 0,
-  step: 33,
-  value: 50,
-  unit: "percent",
+  step: 5,
+  value: 0,
+  unit: "chickens",
   onChange: (value: number) => console.log("sliding"),
 };
 
@@ -31,14 +31,24 @@ export function Slider(): ReactElement {
   const { label, max, min, step, value, unit, onChange } = slider;
 
   useEffect(() => {
+    setSlider({ ...slider, value: min });
+  }, []);
+
+  useEffect(() => {
     const sliderBar = sliderRef.current;
     const sliderWidth = sliderBar?.offsetWidth as number;
     const thumbWidth = sliderThumbRef.current?.offsetWidth as number;
 
     if (sliderWidth && thumbWidth) {
-      const percentageOfThumbWidth = (thumbWidth / sliderWidth) * 100;
-      const thumbOffset = percentageOfThumbWidth / 2;
-      setPosition(`${value - thumbOffset}%`);
+      // Calculate the total number of steps
+      const totalSteps = (max - min) / step;
+      // Calculate the width of one step
+      const stepWidth = sliderWidth / totalSteps;
+      // Calculate the percentage offset for the thumb
+      const thumbPosition = ((value - min) / step) * stepWidth;
+      console.log({ totalSteps, stepWidth, thumbOffset: thumbPosition, thumbWidth });
+      // Adjust for width of thumb
+      setPosition(`${thumbPosition - thumbWidth / 2}px`);
     }
   }, [value]);
 
@@ -48,21 +58,10 @@ export function Slider(): ReactElement {
       if (sliderBar) {
         const rect = sliderBar.getBoundingClientRect();
         const offsetX = e.clientX - rect.left;
-        // if i have max = 100
-        // and min = 0
-        // and I want to go in steps of 5
-        // I would do... max-min for the range
-        // and then i would divide the range into steps
-        // so range / steps
-        // which equals 20
-        console.log({ offsetX });
-        const range = max - min;
-        const numIncrements = range / step;
-        // console.log({ range, step, numIncrements });
         const percentage = (offsetX / rect.width) * 100;
         const unroundedValue = (percentage / 100) * (max - min) + min;
 
-        // Calculate the adjusted value to the nearest 5
+        // Calculate the adjusted value to the nearest step
         const adjustedValue = min + Math.round((unroundedValue - min) / step) * step;
 
         // Ensure the adjusted value is within the specified range
@@ -86,7 +85,10 @@ export function Slider(): ReactElement {
 
   return (
     <>
-      <span>{value}</span>
+      <div style={{ display: "flex", gap: "10px" }}>
+        <div>{value}</div>
+        <div>{unit}</div>
+      </div>
       <div className="slider">
         <label>{label}</label>
         <div
