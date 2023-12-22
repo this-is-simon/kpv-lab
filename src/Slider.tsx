@@ -12,7 +12,7 @@ export interface SliderProps {
   onChange: (value: number) => void;
 }
 
-const initData = {
+let initData = {
   label: "Percentage Slider",
   max: 100,
   min: 0,
@@ -26,6 +26,14 @@ export function Slider(): ReactElement {
   const [slider, setSlider] = useState<SliderProps>(initData);
   const { label, max, min, step, value, unit, onChange } = slider;
   const [dragging, setDragging] = useState(false);
+  const [newValue, setNewValue] = useState<number>();
+
+  useEffect(() => {
+    console.log("newValue?", newValue);
+    if (newValue) {
+      setSlider({ ...slider, value: newValue });
+    }
+  }, [newValue]);
 
   const handleMouseMove = (e: MouseEvent) => {
     if (dragging) {
@@ -36,6 +44,7 @@ export function Slider(): ReactElement {
         const percentage = (offsetX / rect.width) * 100;
         const newValue = (percentage / 100) * (max - min) + min;
         console.log({ offsetX, percentage, oldValue: value, newValue });
+        setNewValue(newValue);
         onChange(newValue);
       }
     }
