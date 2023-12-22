@@ -12,11 +12,22 @@ export interface SliderProps {
   onChange: (value: number) => void;
 }
 
-export function Slider(props: SliderProps): ReactElement {
-  const { label, max, min, step, value, unit, onChange } = props;
+const initData = {
+  label: "Percentage Slider",
+  max: 100,
+  min: 0,
+  step: 1,
+  value: 50,
+  unit: "percent",
+  onChange: (value: number) => console.log("sliding"),
+};
+
+export function Slider(): ReactElement {
+  const [slider, setSlider] = useState<SliderProps>(initData);
+  const { label, max, min, step, value, unit, onChange } = slider;
   const [dragging, setDragging] = useState(false);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: MouseEvent) => {
     if (dragging) {
       const sliderBar = document.getElementById("slider-bar");
       if (sliderBar) {
@@ -24,6 +35,7 @@ export function Slider(props: SliderProps): ReactElement {
         const offsetX = e.clientX - rect.left;
         const percentage = (offsetX / rect.width) * 100;
         const newValue = (percentage / 100) * (max - min) + min;
+        console.log({ offsetX, percentage, oldValue: value, newValue });
         onChange(newValue);
       }
     }
@@ -33,11 +45,11 @@ export function Slider(props: SliderProps): ReactElement {
 
   useEffect(() => {
     document.addEventListener("mouseup", () => setDragging(false));
-    document.addEventListener("mousemove", () => {});
+    document.addEventListener("mousemove", handleMouseMove);
 
     return () => {
       document.removeEventListener("mouseup", () => setDragging(false));
-      document.removeEventListener("mousemove", () => {});
+      document.removeEventListener("mousemove", handleMouseMove);
     };
   }, [dragging, handleMouseMove]);
 
@@ -47,57 +59,9 @@ export function Slider(props: SliderProps): ReactElement {
   // };
 
   //
-  let isDrawing = false;
-  let x = 0;
-  let y = 0;
-
-  const myPics = document.getElementById("myPics");
-  //@ts-ignore
-  const context: HTMLElement = myPics.getContext("2d") as HTMLElement;
-
-  // event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas.
-
-  // Add the event listeners for mousedown, mousemove, and mouseup
-  //@ts-ignore
-  myPics.addEventListener("mousedown", (e) => {
-    x = e.offsetX;
-    y = e.offsetY;
-    isDrawing = true;
-  });
-
-  //@ts-ignore
-  myPics.addEventListener("mousemove", (e) => {
-    if (isDrawing) {
-      drawLine(context, x, y, e.offsetX, e.offsetY);
-      x = e.offsetX;
-      y = e.offsetY;
-    }
-  });
-
-  window.addEventListener("mouseup", (e) => {
-    if (isDrawing) {
-      drawLine(context, x, y, e.offsetX, e.offsetY);
-      x = 0;
-      y = 0;
-      isDrawing = false;
-    }
-  });
-
-  //@ts-ignore
-  function drawLine(context, x1, y1, x2, y2) {
-    context.beginPath();
-    context.strokeStyle = "white";
-    context.lineWidth = 1;
-    context.moveTo(x1, y1);
-    context.lineTo(x2, y2);
-    context.stroke();
-    context.closePath();
-  }
-  //
 
   return (
     <div className="slider">
-      <canvas id="myPics" width="560" height="360"></canvas>
       <label>{label}</label>
       <div id="slider-bar" className="slider-bar" onMouseDown={() => setDragging(true)}>
         <div className="slider-thumb" style={{ left: `${((value - min) / (max - min)) * 100}%` }}>
