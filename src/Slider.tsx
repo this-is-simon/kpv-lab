@@ -24,25 +24,38 @@ let initData = {
 
 export function Slider(): ReactElement {
   const [slider, setSlider] = useState<SliderProps>(initData);
-  const { label, max, min, step, value, unit, onChange } = slider;
   const [dragging, setDragging] = useState(false);
+  const [position, setPosition] = useState<string>();
+  const sliderRef = useRef<HTMLDivElement | null>(null);
+  const sliderThumbRef = useRef<HTMLDivElement | null>(null);
+  const { label, max, min, step, value, unit, onChange } = slider;
+
+  useEffect(() => {
+    const sliderBar = sliderRef.current;
+    const sliderWidth = sliderBar?.offsetWidth as number;
+    const thumbWidth = sliderThumbRef.current?.offsetWidth as number;
+
+    if (sliderWidth && thumbWidth) {
+      const percentageOfThumbWidth = (thumbWidth / sliderWidth) * 100;
+      const thumbOffset = percentageOfThumbWidth / 2;
+      setPosition(`${value - thumbOffset}%`);
+    }
+  }, [value]);
 
   const handleMouseMove = (e: MouseEvent) => {
     if (dragging) {
-      const sliderBar = document.getElementById("slider-bar");
+      const sliderBar = sliderRef.current;
       if (sliderBar) {
         const rect = sliderBar.getBoundingClientRect();
         const offsetX = e.clientX - rect.left;
         const percentage = (offsetX / rect.width) * 100;
-        const newValue = (percentage / 100) * (max - min) + min;
-        const adjustedValue = Math.min(Math.max(newValue, min), max);
-        console.log({ offsetX, percentage, oldValue: value, newValue, adjustedValue });
+        const unroundedValue = (percentage / 100) * (max - min) + min;
+        const roundedValue = Math.round(unroundedValue / step) * step; // Round to the nearest step
+        const adjustedValue = Math.min(Math.max(roundedValue, min), max);
         setSlider({ ...slider, value: adjustedValue });
       }
     }
   };
-
-  console.log({ dragging });
 
   useEffect(() => {
     document.addEventListener("mouseup", () => setDragging(false));
@@ -53,25 +66,6 @@ export function Slider(): ReactElement {
       document.removeEventListener("mousemove", handleMouseMove);
     };
   }, [dragging, handleMouseMove]);
-
-  const sliderRef = useRef<HTMLDivElement | null>(null);
-  const sliderThumbRef = useRef<HTMLDivElement | null>(null);
-
-  // const calculatePosition = useMemo(
-
-  const [initPosition, setInitPosition] = useState<string>();
-  //
-  useEffect(() => {
-    let sliderWidth = sliderRef?.current?.offsetWidth as number;
-    const thumbWidth = sliderThumbRef?.current?.offsetWidth as number;
-    console.log({ sliderWidth, thumbWidth });
-    const percentageOfThumbWidth = (thumbWidth / sliderWidth) * 100;
-    console.log({ percentageOfThumbWidth });
-    const thumbOffset = percentageOfThumbWidth / 2;
-    setInitPosition(`${value - thumbOffset}%`);
-  }, [value]);
-
-  console.log({ thumbOffset: initPosition });
 
   return (
     <>
@@ -84,7 +78,7 @@ export function Slider(): ReactElement {
           className="slider-bar"
           onMouseDown={() => setDragging(true)}
         >
-          <div ref={sliderThumbRef} className="slider-thumb" style={{ left: initPosition }}></div>
+          <div ref={sliderThumbRef} className="slider-thumb" style={{ left: position }}></div>
         </div>
       </div>
     </>
