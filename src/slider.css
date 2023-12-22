@@ -13,6 +13,7 @@
   background-color: #ddd;
   border-radius: 5px;
   cursor: pointer;
+  width: 300px;
 }
 
 .slider-thumb {
@@ -30,18 +31,6 @@
   cursor: pointer;
 }
 
-.slider-thumb span {
-  font-size: 12px;
-  margin: 2px;
-}
-
 .slider-thumb:hover {
   background-color: #2980b9;
-}
-
-
-canvas {
-  border: 1px solid black;
-  width: 560px;
-  height: 360px;
 }

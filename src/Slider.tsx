@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useMemo, useRef } from "react";
 import "./slider.css";
 import { useState, useEffect } from "react";
 
@@ -26,14 +26,6 @@ export function Slider(): ReactElement {
   const [slider, setSlider] = useState<SliderProps>(initData);
   const { label, max, min, step, value, unit, onChange } = slider;
   const [dragging, setDragging] = useState(false);
-  const [newValue, setNewValue] = useState<number>();
-
-  useEffect(() => {
-    console.log("newValue?", newValue);
-    if (newValue) {
-      setSlider({ ...slider, value: newValue });
-    }
-  }, [newValue]);
 
   const handleMouseMove = (e: MouseEvent) => {
     if (dragging) {
@@ -43,9 +35,9 @@ export function Slider(): ReactElement {
         const offsetX = e.clientX - rect.left;
         const percentage = (offsetX / rect.width) * 100;
         const newValue = (percentage / 100) * (max - min) + min;
-        console.log({ offsetX, percentage, oldValue: value, newValue });
-        setNewValue(newValue);
-        onChange(newValue);
+        const adjustedValue = Math.min(Math.max(newValue, min), max);
+        console.log({ offsetX, percentage, oldValue: value, newValue, adjustedValue });
+        setSlider({ ...slider, value: adjustedValue });
       }
     }
   };
@@ -62,21 +54,39 @@ export function Slider(): ReactElement {
     };
   }, [dragging, handleMouseMove]);
 
-  // const calculatePosition = () => {
-  //   const percentage = ((value - min) / (max - min)) * 100;
-  //   return `calc(${percentage}% - ${percentage * 0.15}px)`; // Adjust the 0.15 multiplier for styling
-  // };
+  const sliderRef = useRef<HTMLDivElement | null>(null);
+  const sliderThumbRef = useRef<HTMLDivElement | null>(null);
 
+  // const calculatePosition = useMemo(
+
+  const [initPosition, setInitPosition] = useState<string>();
   //
+  useEffect(() => {
+    let sliderWidth = sliderRef?.current?.offsetWidth as number;
+    const thumbWidth = sliderThumbRef?.current?.offsetWidth as number;
+    console.log({ sliderWidth, thumbWidth });
+    const percentageOfThumbWidth = (thumbWidth / sliderWidth) * 100;
+    console.log({ percentageOfThumbWidth });
+    const thumbOffset = percentageOfThumbWidth / 2;
+    setInitPosition(`${value - thumbOffset}%`);
+  }, [value]);
+
+  console.log({ thumbOffset: initPosition });
 
   return (
-    <div className="slider">
-      <label>{label}</label>
-      <div id="slider-bar" className="slider-bar" onMouseDown={() => setDragging(true)}>
-        <div className="slider-thumb" style={{ left: `${((value - min) / (max - min)) * 100}%` }}>
-          <span>{value}</span>
+    <>
+      <span>{value}</span>
+      <div className="slider">
+        <label>{label}</label>
+        <div
+          ref={sliderRef}
+          id="slider-bar"
+          className="slider-bar"
+          onMouseDown={() => setDragging(true)}
+        >
+          <div ref={sliderThumbRef} className="slider-thumb" style={{ left: initPosition }}></div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
