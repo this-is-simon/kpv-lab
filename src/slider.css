@@ -33,6 +33,12 @@
   opacity: 1;
 }
 
+.slider-thumb-centre {
+  width: 10px; height: 10px;
+  background: white; 
+  border-radius: 50%
+}
+
 .slider-thumb:hover {
   background-color: #2980b9;
 }

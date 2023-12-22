@@ -12,17 +12,7 @@ export interface SliderProps {
   onChange: (value: number) => void;
 }
 
-let initData = {
-  label: "Percentage Slider",
-  max: 100,
-  min: 0,
-  step: 5,
-  value: 0,
-  unit: "chickens",
-  onChange: (value: number) => console.log("sliding"),
-};
-
-export function Slider(): ReactElement {
+export function Slider(initData: SliderProps): ReactElement {
   const [slider, setSlider] = useState<SliderProps>(initData);
   const [dragging, setDragging] = useState(false);
   const [position, setPosition] = useState<string>();
@@ -67,7 +57,7 @@ export function Slider(): ReactElement {
         // Ensure the adjusted value is within the specified range
         const clampedValue = Math.min(Math.max(adjustedValue, min), max);
         console.log({ percentage, unroundedValue, adjustedValue, clampedValue });
-
+        onChange(clampedValue);
         setSlider({ ...slider, value: clampedValue });
       }
     }
@@ -97,7 +87,9 @@ export function Slider(): ReactElement {
           className="slider-bar"
           onMouseDown={() => setDragging(true)}
         >
-          <div ref={sliderThumbRef} className="slider-thumb" style={{ left: position }}></div>
+          <div ref={sliderThumbRef} className="slider-thumb" style={{ left: position }}>
+            <div className="slider-thumb-centre"></div>
+          </div>
         </div>
       </div>
     </>
