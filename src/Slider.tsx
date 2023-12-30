@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useRef } from "react";
+import { ReactElement, useMemo, useRef } from "react";
 import "./slider.css";
 import { useState, useEffect } from "react";
 
@@ -16,6 +16,7 @@ export function Slider(initData: SliderProps): ReactElement {
   const [slider, setSlider] = useState<SliderProps>(initData);
   const [dragging, setDragging] = useState(false);
   const [position, setPosition] = useState<string>();
+  const [fillWidth, setFillWidth] = useState<string>();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const sliderThumbRef = useRef<HTMLDivElement | null>(null);
   const { label, max, min, step, value, unit, onChange } = slider;
@@ -31,10 +32,11 @@ export function Slider(initData: SliderProps): ReactElement {
     // Calculate the percentage offset for the thumb
     const thumbPosition = ((value - min) / step) * stepWidth;
     const thumbWidthOffset = thumbWidth / 2;
-    console.log({ totalSteps, stepWidth, thumbOffset: thumbPosition, thumbWidth });
+
     // Adjust for width of thumb
     setPosition(`${thumbPosition - thumbWidthOffset}px`);
-  }, [value]);
+    setFillWidth(`${thumbPosition}px`);
+  }, [value, max, min, step]);
 
   const handleMouseMove = (e: MouseEvent) => {
     if (dragging) {
@@ -50,7 +52,7 @@ export function Slider(initData: SliderProps): ReactElement {
 
         // Ensure the adjusted value is within the specified range
         const clampedValue = Number(Math.min(Math.max(adjustedValue, min), max).toFixed(2));
-        console.log({ percentage, unroundedValue, adjustedValue, clampedValue });
+        console.log("mouseMove", { percentage, unroundedValue, adjustedValue, clampedValue });
         onChange(clampedValue);
         setSlider({ ...slider, value: clampedValue });
       }
@@ -81,6 +83,8 @@ export function Slider(initData: SliderProps): ReactElement {
           className="slider-bar"
           onMouseDown={() => setDragging(true)}
         >
+          <div className="slider-fill" style={{ width: fillWidth }}></div>
+
           <div ref={sliderThumbRef} className="slider-thumb" style={{ left: position }}>
             <div className="slider-thumb-centre"></div>
           </div>

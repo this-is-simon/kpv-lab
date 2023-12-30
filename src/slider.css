@@ -42,3 +42,9 @@
 .slider-thumb:hover {
   background-color: #2980b9;
 }
+
+.slider-fill {
+  background-color: dodgerblue;
+  height: 100%;
+  border-radius: 5px 0 0 5px;
+}
