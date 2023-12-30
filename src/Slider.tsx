@@ -34,8 +34,8 @@ export function Slider(initData: SliderProps): ReactElement {
     const thumbWidthOffset = thumbWidth / 2;
 
     // Adjust for width of thumb
-    setPosition(`${thumbPosition - thumbWidthOffset}px`);
     setFillWidth(`${thumbPosition}px`);
+    setPosition(`${thumbPosition - thumbWidthOffset}px`);
   }, [value, max, min, step]);
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -71,22 +71,22 @@ export function Slider(initData: SliderProps): ReactElement {
 
   return (
     <>
-      <div style={{ display: "flex", gap: "10px" }}>
+      <div style={{ display: "flex" }}>
         <div>{value}</div>
         <div>{unit}</div>
       </div>
       <div className="slider">
         <label>{label}</label>
-        <div
-          ref={sliderRef}
-          id="slider-bar"
-          className="slider-bar"
-          onMouseDown={() => setDragging(true)}
-        >
+        <div ref={sliderRef} className="slider-bar">
           <div className="slider-fill" style={{ width: fillWidth }}></div>
-
-          <div ref={sliderThumbRef} className="slider-thumb" style={{ left: position }}>
-            <div className="slider-thumb-centre">{value}</div>
+          <div
+            ref={sliderThumbRef}
+            className="slider-thumb"
+            style={{ left: position }}
+            onMouseDown={() => setDragging(true)}
+          >
+            {value}
+            {unit}
           </div>
           <IncrementMarkers min={min} max={max} />
         </div>
