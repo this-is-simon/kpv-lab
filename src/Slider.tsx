@@ -59,6 +59,22 @@ export function Slider(initData: SliderProps): ReactElement {
     }
   };
 
+  const renderIncrementMarkers = () => {
+    const markers = [
+      min,
+      min + (max - min) * 0.25,
+      min + (max - min) * 0.5,
+      min + (max - min) * 0.75,
+      max,
+    ];
+    return markers.map((markerValue, index) => (
+      <div key={index} className="slider-marker">
+        <div className="marker-line"></div>
+        <div className="marker-label">{markerValue}</div>
+      </div>
+    ));
+  };
+
   useEffect(() => {
     document.addEventListener("mouseup", () => setDragging(false));
     document.addEventListener("mousemove", handleMouseMove);
@@ -89,6 +105,7 @@ export function Slider(initData: SliderProps): ReactElement {
             <div className="slider-thumb-centre"></div>
           </div>
         </div>
+        <div className="slider-markers">{renderIncrementMarkers()}</div>
       </div>
     </>
   );

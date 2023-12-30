@@ -48,3 +48,38 @@
   height: 100%;
   border-radius: 5px 0 0 5px;
 }
+
+.slider-markers {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px; /* Adjust as needed for spacing */
+  position: relative;
+  width: 100%; /* Same as the width of the slider bar */
+}
+
+.slider-marker {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.marker-line {
+  width: 1px; /* Width of the vertical line */
+  height: 10px; /* Height of the vertical line */
+  background-color: white; /* Color of the line */
+  margin-bottom: 2px;
+  margin-left: -1px; /* Adjust to center the line */
+}
+
+.marker-label {
+  /* Adjust font-size, color, etc., as needed */
+  font-size: 12px;
+}
+
+/* Position the markers */
+.slider-marker:nth-child(1) { left: 0%; }
+.slider-marker:nth-child(2) { left: 25%; transform: translateX(-50%); }
+.slider-marker:nth-child(3) { left: 50%; transform: translateX(-50%); }
+.slider-marker:nth-child(4) { left: 75%; transform: translateX(-50%); }
+.slider-marker:nth-child(5) { right: 0%; }
