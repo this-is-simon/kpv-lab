@@ -59,22 +59,6 @@ export function Slider(initData: SliderProps): ReactElement {
     }
   };
 
-  const renderIncrementMarkers = () => {
-    const markers = [
-      min,
-      min + (max - min) * 0.25,
-      min + (max - min) * 0.5,
-      min + (max - min) * 0.75,
-      max,
-    ];
-    return markers.map((markerValue, index) => (
-      <div key={index} className="slider-marker">
-        <div className="marker-line"></div>
-        <div className="marker-label">{markerValue}</div>
-      </div>
-    ));
-  };
-
   useEffect(() => {
     document.addEventListener("mouseup", () => setDragging(false));
     document.addEventListener("mousemove", handleMouseMove);
@@ -102,11 +86,36 @@ export function Slider(initData: SliderProps): ReactElement {
           <div className="slider-fill" style={{ width: fillWidth }}></div>
 
           <div ref={sliderThumbRef} className="slider-thumb" style={{ left: position }}>
-            <div className="slider-thumb-centre"></div>
+            <div className="slider-thumb-centre">{value}</div>
           </div>
+          <IncrementMarkers min={min} max={max} />
         </div>
-        <div className="slider-markers">{renderIncrementMarkers()}</div>
       </div>
     </>
   );
 }
+
+interface IncrementProps {
+  min: number;
+  max: number;
+}
+
+const IncrementMarkers = ({ min, max }: IncrementProps) => {
+  const markers = [
+    min,
+    min + (max - min) * 0.25,
+    min + (max - min) * 0.5,
+    min + (max - min) * 0.75,
+    max,
+  ];
+  return (
+    <div className="slider-markers">
+      {markers.map((markerValue, index) => (
+        <div key={index} className="slider-marker">
+          <div className="marker-line"></div>
+          <div className="marker-label">{markerValue}</div>
+        </div>
+      ))}
+    </div>
+  );
+};

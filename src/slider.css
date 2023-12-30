@@ -20,9 +20,9 @@
   position: absolute;
   top: -5px;
   height: 20px;
-  width: 20px;
-  background-color: #3498db;
-  border-radius: 50%;
+  width: 40px;
+  background-color: dodgerblue;
+  border-radius: 5px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -31,12 +31,13 @@
   cursor: pointer;
   transition: opacity 3s;
   opacity: 1;
+
+  font-size: 14px;
 }
 
 .slider-thumb-centre {
-  width: 10px; height: 10px;
-  background: white; 
-  border-radius: 50%
+  /* height: 40px; */
+  border-radius: 5px;
 }
 
 .slider-thumb:hover {
@@ -73,7 +74,8 @@
 }
 
 .marker-label {
-  /* Adjust font-size, color, etc., as needed */
+  position: absolute;
+  top: 14px;
   font-size: 12px;
 }
 
