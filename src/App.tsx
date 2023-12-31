@@ -11,6 +11,23 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
+        <div
+          style={{
+            border: "2px solid red",
+            width: "100%",
+            maxWidth: "500px",
+          }}
+        >
+          <div
+            style={{
+              border: "2px solid yellow",
+              height: "100px",
+              display: "flex",
+              minWidth: "200px",
+              margin: "20px",
+            }}
+          />
+        </div>
         <Slider
           label="Percentage Slider"
           max={100}
