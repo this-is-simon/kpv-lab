@@ -76,13 +76,26 @@ export function Slider(initData: SliderProps): ReactElement {
     };
   }, [dragging, handleMouseMove]);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    let newValue = value;
+    if (e.key === "ArrowRight") {
+      newValue = Number(Math.min(value + step, max).toFixed(2));
+    } else if (e.key === "ArrowLeft") {
+      newValue = Number(Math.max(value - step, min).toFixed(2));
+    }
+    if (newValue !== value) {
+      onChange(newValue);
+      setSlider({ ...slider, value: newValue });
+    }
+  };
+
   return (
     <>
       <div style={{ display: "flex" }}>
         <div>{value}</div>
         <div>{unit}</div>
       </div>
-      <div className="slider">
+      <div className="slider" onKeyDown={handleKeyDown} tabIndex={0}>
         <label>{label}</label>
         <div ref={sliderRef} className="slider-bar" onClick={handleClick}>
           <div className="slider-fill" style={{ width: fillWidth }}></div>

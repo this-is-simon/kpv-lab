@@ -2,6 +2,10 @@
   margin: 20px 0 60px;
 }
 
+.slider:focus {
+  outline: none;
+}
+
 .slider label {
   display: block;
   margin-bottom: 8px;
@@ -71,11 +75,11 @@
 }
 
 .marker-line {
-  width: 1px; /* Width of the vertical line */
-  height: 10px; /* Height of the vertical line */
-  background-color: white; /* Color of the line */
+  width: 1px; 
+  height: 10px;
+  background-color: white; 
   margin-bottom: 2px;
-  margin-left: -1px; /* Adjust to center the line */
+  margin-left: -1px;
 }
 
 .marker-label {
