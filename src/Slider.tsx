@@ -38,25 +38,32 @@ export function Slider(initData: SliderProps): ReactElement {
     setPosition(`${thumbPosition - thumbWidthOffset}px`);
   }, [value, max, min, step]);
 
+  const updateSliderValue = (clientX: number) => {
+    const sliderBar = sliderRef.current;
+    if (sliderBar) {
+      const rect = sliderBar.getBoundingClientRect();
+      const offsetX = clientX - rect.left;
+      const percentage = (offsetX / rect.width) * 100;
+      const newValue = (percentage / 100) * (max - min) + min;
+
+      // Calculate the adjusted value to the nearest step
+      const adjustedValue = min + Math.round((newValue - min) / step) * step;
+
+      // Ensure the adjusted value is within the specified range
+      const clampedValue = Math.min(Math.max(adjustedValue, min), max);
+      onChange(clampedValue);
+      setSlider({ ...slider, value: clampedValue });
+    }
+  };
+
   const handleMouseMove = (e: MouseEvent) => {
     if (dragging) {
-      const sliderBar = sliderRef.current;
-      if (sliderBar) {
-        const rect = sliderBar.getBoundingClientRect();
-        const offsetX = e.clientX - rect.left;
-        const percentage = (offsetX / rect.width) * 100;
-        const unroundedValue = (percentage / 100) * (max - min) + min;
-
-        // Calculate the adjusted value to the nearest step
-        const adjustedValue = min + Math.round((unroundedValue - min) / step) * step;
-
-        // Ensure the adjusted value is within the specified range
-        const clampedValue = Number(Math.min(Math.max(adjustedValue, min), max).toFixed(2));
-        console.log("mouseMove", { percentage, unroundedValue, adjustedValue, clampedValue });
-        onChange(clampedValue);
-        setSlider({ ...slider, value: clampedValue });
-      }
+      updateSliderValue(e.clientX);
     }
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    updateSliderValue(e.clientX);
   };
 
   useEffect(() => {
@@ -77,7 +84,7 @@ export function Slider(initData: SliderProps): ReactElement {
       </div>
       <div className="slider">
         <label>{label}</label>
-        <div ref={sliderRef} className="slider-bar">
+        <div ref={sliderRef} className="slider-bar" onClick={handleClick}>
           <div className="slider-fill" style={{ width: fillWidth }}></div>
           <div
             ref={sliderThumbRef}
