@@ -14,7 +14,7 @@ export interface SliderProps {
 
 export function Slider(initData: SliderProps): ReactElement {
   const [slider, setSlider] = useState<SliderProps>(initData);
-  const [dragging, setDragging] = useState(false);
+  const [dragging, setDragging] = useState<boolean>(false);
   const [position, setPosition] = useState<string>();
   const [fillWidth, setFillWidth] = useState<string>();
   const sliderRef = useRef<HTMLDivElement | null>(null);
@@ -36,7 +36,7 @@ export function Slider(initData: SliderProps): ReactElement {
     // Adjust for width of thumb
     setFillWidth(`${thumbPosition}px`);
     setPosition(`${thumbPosition - thumbWidthOffset}px`);
-  }, [value, max, min, step]);
+  }, [value]);
 
   const updateSliderValue = (clientX: number) => {
     const sliderBar = sliderRef.current;
@@ -50,7 +50,7 @@ export function Slider(initData: SliderProps): ReactElement {
       const adjustedValue = min + Math.round((newValue - min) / step) * step;
 
       // Ensure the adjusted value is within the specified range
-      const clampedValue = Math.min(Math.max(adjustedValue, min), max);
+      const clampedValue = Number(Math.min(Math.max(adjustedValue, min), max).toFixed(2));
       onChange(clampedValue);
       setSlider({ ...slider, value: clampedValue });
     }
