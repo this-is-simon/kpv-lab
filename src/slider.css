@@ -93,3 +93,27 @@
 .slider-marker:nth-child(3) { left: 50%; transform: translateX(-50%); }
 .slider-marker:nth-child(4) { left: 75%; transform: translateX(-50%); }
 .slider-marker:nth-child(5) { right: 0%; }
+
+.slider-controls {
+  display: flex;
+  align-items: center;
+}
+
+.slider-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px; 
+  height: 30px; 
+  border-radius: 50%;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  background-color: dodgerblue;
+  color: white;
+  margin: 0 5px;
+}
+
+.slider-btn:focus {
+  outline: none;
+}

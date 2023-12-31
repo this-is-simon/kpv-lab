@@ -91,22 +91,42 @@ export function Slider(initData: SliderProps): ReactElement {
     }
   };
 
+  const incrementValue = () => {
+    const newValue = Number(Math.min(value + step, max).toFixed(2));
+    onChange(newValue);
+    setSlider({ ...slider, value: newValue });
+  };
+
+  const decrementValue = () => {
+    const newValue = Number(Math.max(value - step, min).toFixed(2));
+    onChange(newValue);
+    setSlider({ ...slider, value: newValue });
+  };
+
   return (
     <>
       <div className="slider" onKeyDown={handleKeyDown} tabIndex={0}>
         <label>{label}</label>
-        <div ref={sliderRef} className="slider-bar" onClick={handleClick}>
-          <div className="slider-fill" style={{ width: fillWidth }}></div>
-          <div
-            ref={sliderThumbRef}
-            className={thumbClass}
-            style={{ left: position }}
-            onMouseDown={() => setDragging(true)}
-          >
-            {value}
-            {unit}
+        <div className="slider-controls">
+          <button onClick={decrementValue} className="slider-btn slider-btn-minus">
+            −
+          </button>
+          <div ref={sliderRef} className="slider-bar" onClick={handleClick}>
+            <div className="slider-fill" style={{ width: fillWidth }}></div>
+            <div
+              ref={sliderThumbRef}
+              className={thumbClass}
+              style={{ left: position }}
+              onMouseDown={() => setDragging(true)}
+            >
+              {value}
+              {unit}
+            </div>
+            {showIncrements && <IncrementMarkers min={min} max={max} />}
           </div>
-          {showIncrements && <IncrementMarkers min={min} max={max} />}
+          <button onClick={incrementValue} className="slider-btn slider-btn-plus">
+            +
+          </button>
         </div>
       </div>
     </>
