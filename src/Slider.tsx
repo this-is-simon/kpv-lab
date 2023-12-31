@@ -9,6 +9,7 @@ export interface SliderProps {
   step: number;
   value: number;
   unit?: string;
+  showIncrements?: boolean;
   onChange: (value: number) => void;
 }
 
@@ -19,7 +20,8 @@ export function Slider(initData: SliderProps): ReactElement {
   const [fillWidth, setFillWidth] = useState<string>();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const sliderThumbRef = useRef<HTMLDivElement | null>(null);
-  const { label, max, min, step, value, unit, onChange } = slider;
+  const { label, max, min, step, value, unit, showIncrements, onChange } = slider;
+  const thumbClass = `slider-thumb${showIncrements ? " show-increments" : ""}`;
 
   useEffect(() => {
     const sliderBar = sliderRef.current;
@@ -91,24 +93,20 @@ export function Slider(initData: SliderProps): ReactElement {
 
   return (
     <>
-      <div style={{ display: "flex" }}>
-        <div>{value}</div>
-        <div>{unit}</div>
-      </div>
       <div className="slider" onKeyDown={handleKeyDown} tabIndex={0}>
         <label>{label}</label>
         <div ref={sliderRef} className="slider-bar" onClick={handleClick}>
           <div className="slider-fill" style={{ width: fillWidth }}></div>
           <div
             ref={sliderThumbRef}
-            className="slider-thumb"
+            className={thumbClass}
             style={{ left: position }}
             onMouseDown={() => setDragging(true)}
           >
             {value}
             {unit}
           </div>
-          <IncrementMarkers min={min} max={max} />
+          {showIncrements && <IncrementMarkers min={min} max={max} />}
         </div>
       </div>
     </>

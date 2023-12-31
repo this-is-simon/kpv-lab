@@ -18,6 +18,7 @@ function App() {
           step={5}
           value={50}
           unit={"%"}
+          showIncrements
           onChange={(value: number) => console.log(`Percentage is ${value}%`)}
         />
         <Slider
