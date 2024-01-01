@@ -10,6 +10,7 @@ export interface SliderProps {
   value: number;
   unit?: string;
   showIncrements?: boolean;
+  showButtons?: boolean;
   onChange: (value: number) => void;
 }
 
@@ -20,7 +21,7 @@ export function Slider(initData: SliderProps): ReactElement {
   const [fillWidth, setFillWidth] = useState<string>();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const sliderThumbRef = useRef<HTMLDivElement | null>(null);
-  const { label, max, min, step, value, unit, showIncrements, onChange } = slider;
+  const { label, max, min, step, value, unit, showIncrements, showButtons, onChange } = slider;
   const thumbClass = `slider-thumb${showIncrements ? " show-increments" : ""}`;
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export function Slider(initData: SliderProps): ReactElement {
     }
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseDrag = (e: MouseEvent) => {
     if (dragging) {
       updateSliderValue(e.clientX);
     }
@@ -70,13 +71,13 @@ export function Slider(initData: SliderProps): ReactElement {
 
   useEffect(() => {
     document.addEventListener("mouseup", () => setDragging(false));
-    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mousemove", handleMouseDrag);
 
     return () => {
       document.removeEventListener("mouseup", () => setDragging(false));
-      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mousemove", handleMouseDrag);
     };
-  }, [dragging, handleMouseMove]);
+  }, [dragging, handleMouseDrag]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     let newValue = value;
@@ -105,12 +106,14 @@ export function Slider(initData: SliderProps): ReactElement {
 
   return (
     <>
-      <div className="slider" onKeyDown={handleKeyDown} tabIndex={0}>
+      <div className="slider-container" onKeyDown={handleKeyDown} tabIndex={0}>
         <label>{label}</label>
-        <div className="slider-controls">
-          <button onClick={decrementValue} className="slider-btn slider-btn-minus">
-            −
-          </button>
+        <div className="slider">
+          {showButtons && (
+            <button onClick={decrementValue} className="slider-btn slider-btn-minus">
+              −
+            </button>
+          )}
           <div ref={sliderRef} className="slider-bar" onClick={handleClick}>
             <div className="slider-fill" style={{ width: fillWidth }}></div>
             <div
@@ -124,9 +127,11 @@ export function Slider(initData: SliderProps): ReactElement {
             </div>
             {showIncrements && <IncrementMarkers min={min} max={max} />}
           </div>
-          <button onClick={incrementValue} className="slider-btn slider-btn-plus">
-            +
-          </button>
+          {showButtons && (
+            <button onClick={incrementValue} className="slider-btn slider-btn-plus">
+              +
+            </button>
+          )}
         </div>
       </div>
     </>
@@ -150,7 +155,7 @@ const IncrementMarkers = ({ min, max }: IncrementProps) => {
     <div className="slider-markers">
       {markers.map((markerValue, index) => (
         <div key={index} className="slider-marker">
-          <div className="marker-line"></div>
+          <div className="marker-line" />
           <div className="marker-label">{markerValue}</div>
         </div>
       ))}

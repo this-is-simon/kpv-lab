@@ -1,4 +1,3 @@
-import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { Slider } from "./Slider";
@@ -36,6 +35,7 @@ function App() {
           value={50}
           unit={"%"}
           showIncrements
+          showButtons
           onChange={(value: number) => console.log(`Percentage is ${value}%`)}
         />
         <Slider

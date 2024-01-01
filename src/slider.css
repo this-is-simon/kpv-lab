@@ -1,12 +1,12 @@
-.slider {
+.slider-container {
   margin: 20px 0 60px;
 }
 
-.slider:focus {
+.slider-container:focus {
   outline: none;
 }
 
-.slider label {
+.slider-container label {
   display: block;
   margin-bottom: 8px;
 }
@@ -94,7 +94,7 @@
 .slider-marker:nth-child(4) { left: 75%; transform: translateX(-50%); }
 .slider-marker:nth-child(5) { right: 0%; }
 
-.slider-controls {
+.slider {
   display: flex;
   align-items: center;
 }
