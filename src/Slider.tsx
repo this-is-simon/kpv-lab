@@ -110,7 +110,7 @@ export function Slider(initData: SliderProps): ReactElement {
         <label>{label}</label>
         <div className="slider">
           {showButtons && (
-            <button onClick={decrementValue} className="slider-btn slider-btn-minus">
+            <button onClick={decrementValue} className="slider-btn">
               −
             </button>
           )}
@@ -128,7 +128,7 @@ export function Slider(initData: SliderProps): ReactElement {
             {showIncrements && <IncrementMarkers min={min} max={max} />}
           </div>
           {showButtons && (
-            <button onClick={incrementValue} className="slider-btn slider-btn-plus">
+            <button onClick={incrementValue} className="slider-btn">
               +
             </button>
           )}
