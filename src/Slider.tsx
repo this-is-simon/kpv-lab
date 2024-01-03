@@ -1,4 +1,4 @@
-import { ReactElement, useMemo, useRef } from "react";
+import { ReactElement, useRef } from "react";
 import "./slider.css";
 import { useState, useEffect } from "react";
 
@@ -15,31 +15,34 @@ export interface SliderProps {
 }
 
 export function Slider(initData: SliderProps): ReactElement {
-  const [slider, setSlider] = useState<SliderProps>(initData);
+  const [value, setValue] = useState<number>(initData.value);
   const [dragging, setDragging] = useState<boolean>(false);
-  const [position, setPosition] = useState<string>();
-  const [fillWidth, setFillWidth] = useState<string>();
+  const [position, setPosition] = useState<string>("");
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const sliderThumbRef = useRef<HTMLDivElement | null>(null);
-  const { label, max, min, step, value, unit, showIncrements, showButtons, onChange } = slider;
+  const { label, max, min, step, unit, showIncrements, showButtons, onChange } = initData;
   const thumbClass = `slider-thumb${showIncrements ? " show-increments" : ""}`;
 
   useEffect(() => {
-    const sliderBar = sliderRef.current;
-    const sliderWidth = sliderBar?.offsetWidth as number;
-    const thumbWidth = sliderThumbRef.current?.offsetWidth as number;
-    // Calculate the total number of steps
-    const totalSteps = (max - min) / step;
-    // Calculate the width of one step
-    const stepWidth = sliderWidth / totalSteps;
-    // Calculate the percentage offset for the thumb
-    const thumbPosition = ((value - min) / step) * stepWidth;
-    const thumbWidthOffset = thumbWidth / 2;
-
-    // Adjust for width of thumb
-    setFillWidth(`${thumbPosition}px`);
-    setPosition(`${thumbPosition - thumbWidthOffset}px`);
+    onChange(value);
   }, [value]);
+
+  useEffect(() => {
+    const sliderBar = sliderRef.current;
+    if (sliderBar) {
+      const sliderWidth = sliderBar.offsetWidth; // Get the rendered width of the slider bar.
+      const thumbWidth = sliderThumbRef.current?.offsetWidth || 0; // Get the rendered width of the slider thumb.
+      const totalSteps = (max - min) / step; // Calculate the total number of steps.
+      const stepWidth = sliderWidth / totalSteps; // Calculate the width of each step.
+      const thumbPosition = ((value - min) / step) * stepWidth; // Calculate thumb position.
+      const position = thumbPosition - thumbWidth / 2; // Adjust for thumb's width.
+      setPosition(`${position}px`); // Set the thumb's position.
+    }
+  }, [value, max, min, step]);
+
+  const clampAndRoundValue = (valueToAdjust: number): number => {
+    return Number(Math.min(Math.max(valueToAdjust, min), max).toFixed(2));
+  };
 
   const updateSliderValue = (clientX: number) => {
     const sliderBar = sliderRef.current;
@@ -48,14 +51,9 @@ export function Slider(initData: SliderProps): ReactElement {
       const offsetX = clientX - rect.left;
       const percentage = (offsetX / rect.width) * 100;
       const newValue = (percentage / 100) * (max - min) + min;
-
-      // Calculate the adjusted value to the nearest step
       const adjustedValue = min + Math.round((newValue - min) / step) * step;
-
-      // Ensure the adjusted value is within the specified range
-      const clampedValue = Number(Math.min(Math.max(adjustedValue, min), max).toFixed(2));
-      onChange(clampedValue);
-      setSlider({ ...slider, value: clampedValue });
+      const clampedValue = clampAndRoundValue(adjustedValue);
+      setValue(clampedValue);
     }
   };
 
@@ -65,7 +63,7 @@ export function Slider(initData: SliderProps): ReactElement {
     }
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
     updateSliderValue(e.clientX);
   };
 
@@ -80,33 +78,36 @@ export function Slider(initData: SliderProps): ReactElement {
   }, [dragging, handleMouseDrag]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    let newValue = value;
     if (e.key === "ArrowRight") {
-      newValue = Number(Math.min(value + step, max).toFixed(2));
+      incrementValue();
     } else if (e.key === "ArrowLeft") {
-      newValue = Number(Math.max(value - step, min).toFixed(2));
-    }
-    if (newValue !== value) {
-      onChange(newValue);
-      setSlider({ ...slider, value: newValue });
+      decrementValue();
     }
   };
 
   const incrementValue = () => {
-    const newValue = Number(Math.min(value + step, max).toFixed(2));
-    onChange(newValue);
-    setSlider({ ...slider, value: newValue });
+    const newValue = clampAndRoundValue(value + step);
+    setValue(newValue);
   };
 
   const decrementValue = () => {
-    const newValue = Number(Math.max(value - step, min).toFixed(2));
-    onChange(newValue);
-    setSlider({ ...slider, value: newValue });
+    const newValue = clampAndRoundValue(value - step);
+    setValue(newValue);
   };
 
   return (
     <>
-      <div className="slider-container" onKeyDown={handleKeyDown} tabIndex={0}>
+      <div
+        className="slider-container"
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="slider"
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={value}
+        aria-valuetext={`${value}${unit}`}
+        aria-label={label}
+      >
         <label>{label}</label>
         <div className="slider">
           {showButtons && (
@@ -114,8 +115,8 @@ export function Slider(initData: SliderProps): ReactElement {
               −
             </button>
           )}
-          <div ref={sliderRef} className="slider-bar" onClick={handleClick}>
-            <div className="slider-fill" style={{ width: fillWidth }}></div>
+          <div ref={sliderRef} className="slider-bar" onClick={handleBarClick}>
+            <div className="slider-fill" style={{ width: value === min ? "0px" : position }}></div>
             <div
               ref={sliderThumbRef}
               className={thumbClass}

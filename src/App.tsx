@@ -14,7 +14,7 @@ function App() {
           label="Percentage Slider"
           max={100}
           min={0}
-          step={5}
+          step={10}
           value={50}
           unit={"%"}
           showIncrements
@@ -29,7 +29,7 @@ function App() {
           value={0}
           showIncrements
           showButtons
-          onChange={(value: number) => console.log(`Proportional value is ${value}%`)}
+          onChange={(value: number) => console.log(`Proportional value is ${value}`)}
         />
       </header>
     </div>
