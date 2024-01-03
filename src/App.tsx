@@ -27,6 +27,8 @@ function App() {
           min={0}
           step={0.01}
           value={0}
+          showIncrements
+          showButtons
           onChange={(value: number) => console.log(`Proportional value is ${value}%`)}
         />
       </header>
